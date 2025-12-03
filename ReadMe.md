@@ -9,3 +9,4 @@
 ## What you will need?
 
 - You will need Github_API token and will need to set up either using  `export GITHUB_TOKEN='testtestestest'` or `$Env=GITHUB_TOKEN='testtesteest'`
+- Install ``pip install GitPython``
