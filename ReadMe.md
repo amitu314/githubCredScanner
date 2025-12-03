@@ -1,4 +1,4 @@
-`` This script will work for check sensitive credentials in repositories inside an organization Account. ``
+`` This script will work for check sensitive credentials in repositories inside an organization or individual user Account. ``
 Sensitive information this script would check
 
 - Azure Storage Key
@@ -14,7 +14,7 @@ This script is intended for particular use-cases. More use-cases may be added
 
 ## How to run the scripts
 
-- First run the cloneRepoOrgAcc script. This will clone all the repos from an Org account to a particular folder.
+- First run the cloneRepoOrgAcc script for Org Account OR run cloneUserAcc script to clone individual user account. This will clone all the repos from an Org / user account to a particular folder.
 - Then, run the checkCred script to get sensitive creds in the files under the repo (by OS walk)
 
 ## What you will need?
