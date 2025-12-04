@@ -20,7 +20,7 @@ def gitRepoUnderAcc(accName):
         param = {'per_page': 100, 'page': pageNo}
         response =  requests.get(accountURL, headers=headers, params=param)
         #print(response.status_code)
-        if response.status_code == 200:
+        if response.status_code == 200 and pageNo <100:
             repoData = response.json()
             pageNo += 1
             #gitRepoUnderAcc(accName)
