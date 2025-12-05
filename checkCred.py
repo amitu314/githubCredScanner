@@ -24,17 +24,21 @@ def walkDir():
         eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}
     )
 '''
-    for root, dirs, files in os.walk(path, topdown=True):
-        for file in files:
-            #print(os.path.join(root, file))
-            with open(os.path.join(root, file), 'r', encoding='utf-8', errors='ignore') as f:
-                try:
-                    content = f.read()
-                    match = re.findall(regPattern, content)
-                    if match:
-                        print(f"Found in file: {os.path.join(root, file)}| Matches: {match}")
-                except Exception as e:
-                    print(f"Error reading file {file}: {e}")
+    pattern = re.compile(regPattern, re.IGNORECASE | re.VERBOSE)
+    with open ('docsCred.txt', 'w') as credFile:
+        for root, dirs, files in os.walk(path, topdown=True):
+            for file in files:
+                #print(os.path.join(root, file))
+                with open(os.path.join(root, file), 'r', encoding='utf-8', errors='ignore') as f:
+                    try:
+                        content = f.read()
+                        match = pattern.findall(content)
+                        #match = re.findall(regPattern, content)
+                        if match:
+                            credFile.write(f"Found in file: {os.path.join(root, file)} | Matches: {match}\n")
+                            #print(f"Found in file: {os.path.join(root, file)}| Matches: {match}")
+                    except Exception as e:
+                        print(f"Error reading file {file}: {e}")
 
 if __name__ == "__main__":
     walkDir()
