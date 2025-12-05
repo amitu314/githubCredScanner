@@ -8,22 +8,21 @@ def walkDir():
     #regPattern = r'(ClientSecret\"\svalue\=.+|AccountKey\=.\S{10,}|secret_key_base\:\s.[a-zA-Z0-9_.-]{12,}|secret(\s|\:|\=).+[a-zA-Z0-9_.-]{12,}|Bearer\s.\S{11,}|(api[_-](key|token)(\:|\=).[a-zA-Z0-9_.-]{10,}))'
     #regPattern = r'(ssh-rsa\s+[A-Za-z0-9+/=]+|BEGIN\s(RSA|DSA|EC|PGP|OPENSSH)\sPRIVATE\sKEY|(password|passwd|pwd|Password|PASSWORD)(\s|\:|\=).{8,}|eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,})'
     regPattern = r'''
-(
-    (mongodb|postgres|mysql|jdbc|redis|ftp|smtp)[\s_\-=:][a-zA-Z0-9+\=.-_]{10,}|
-    (Azure_Storage_(AccountName|AccountKey|key|Key|KEY|AccessKey|ACCESSKEY|SasToken).+)|
-    (ClientSecret\"\svalue\=.+)|
-    ((AccessKey|ACCESSKEY|ACCESS_KEY|Access_key)\=.\S{10,})|
-    (AccountKey\=.\S{10,})|
-    (secret_key_base\:\s.[a-zA-Z0-9_.-]{12,})|
-    (secret(\s|\:|\=).+[a-zA-Z0-9_.-]{12,})|
-    (Bearer\s.\S{11,})|
-    (api[_-](key|token)(\:|\=).[a-zA-Z0-9_.-]{10,}))|
-    api[_-](key|token)(\:|\=).[a-zA-Z0-9_.-]{10,}|
-    (ssh-rsa\s+[A-Za-z0-9+/=]+) |
-    (-----BEGIN\s(?:RSA|DSA|EC|PGP|OPENSSH)\sPRIVATE\sKEY-----) |
-    ((password|passwd|pwd|Password|PASSWORD)\s*[:=]\s*["']?[^\s"']{8,}) |
-    (eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}) 
-)
+    (
+        (?:mongodb|postgres|mysql|jdbc|redis|ftp|smtp)[\s_\-=:][A-Za-z0-9+=._-]{10,}|
+        Azure_Storage_(?:AccountName|AccountKey|key|Key|KEY|AccessKey|ACCESSKEY|SasToken)[^\n]+|
+        ClientSecret"\svalue=.+|
+        (?:AccessKey|ACCESSKEY|ACCESS_KEY|Access_key)=\S{10,}|
+        AccountKey=\S{10,}|
+        secret_key_base:\s.[A-Za-z0-9_.-]{12,}|
+        secret(?:\s|:|=).+[A-Za-z0-9_.-]{12,}|
+        Bearer\s.\S{11,}|
+        api[_-](?:key|token)(?:\:|=).[A-Za-z0-9_.-]{10,}|
+        ssh-rsa\s+[A-Za-z0-9+/=]+|
+        -----BEGIN\s(?:RSA|DSA|EC|PGP|OPENSSH)\sPRIVATE\sKEY-----|
+        (?:password|passwd|pwd|Password|PASSWORD)\s*[:=]\s*["']?[^\s"']{8,}|
+        eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}
+    )
 '''
     for root, dirs, files in os.walk(path, topdown=True):
         for file in files:
