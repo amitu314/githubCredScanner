@@ -11,6 +11,8 @@ Sensitive information this script would check
 
 This script is intended for particular use-cases. More use-cases may be added
 
+If there are repositories with more than 25 branches, this script will create a separate list (branchToomanySkip.txt) and will skip those repos to avoid longer processing time
+
 
 ## How to run the scripts
 
