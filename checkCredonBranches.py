@@ -4,43 +4,57 @@ from pathlib import Path
 from git import Repo
 
 def remoteBranchCheckNoCheckout(repoPath, regPattern):
-    repo = Repo(repoPath)
-    origin = repo.remotes.origin
-    #print(origin.url)
     try:
+        repo = Repo(repoPath)
+        origin = repo.remotes.origin
+        #print(origin.url)
+        #branchCount = len(list(repo.branches))
+        #print(f" Branch count for {repoPath}: {branchCount}")
+
         origin.fetch()
+        branchCount = len(list(origin.refs))
+        print(f" Branch count for {repoPath}: {branchCount}")
     except Exception as e:
         print(f"Error fetching {e}")
         
     pattern = re.compile(regPattern, re.IGNORECASE | re.MULTILINE)
 
     results = {}
-    for ref in origin.refs:
-        branch = ref.remote_head
-        try:
-            files = repo.git.ls_tree('-r', '--name-only', ref.name).splitlines()
-        except Exception as e:
-            print(f"Error {e} listing files | branch {branch} | repo {repoPath}")
-            continue
-        matchOnBranch = []
-        for path in files:
+    if branchCount < 25:
+        for ref in origin.refs:
             
             try:
-                content = repo.git.show(f"{ref.name}:{path}")
+                branch = ref.remote_head
+                print("fetching files for branch:", branch)
+                files = repo.git.ls_tree('-r', '--name-only', ref.name).splitlines()
             except Exception as e:
-                print(f"Error {e} reading file {path} | branch {branch} | repo {repoPath}")
+                print(f"Error {e} listing files | branch {branch} | repo {repoPath}")
                 continue
+            matchOnBranch = []
+            for path in files:
+                
+                try:
+                    print(f"getting content: {path} ")
+                    content = repo.git.show(f"{ref.name}:{path}")
+                except Exception as e:
+                    print(f"Error {e} reading file {path} | branch {branch} | repo {repoPath}")
+                    continue
 
-            matches = list(pattern.findall(content))
-            if matches:
-                matchOnBranch.append({"path": path, "matches": matches})
+                matches = list(pattern.findall(content))
+                if matches:
+                    matchOnBranch.append({"path": path, "matches": matches})
 
-        if matchOnBranch:
-            #print(matchOnBranch)
-            results[branch] = matchOnBranch
-            #return matchOnBranch
+            if matchOnBranch:
+                #print(matchOnBranch)
+                results[branch] = matchOnBranch
+                #return matchOnBranch
+    else:
+        with open ('branchTooManySkip.txt', 'a') as skipFile:
+            skipFile.write(f"Skipping branch scan for {repoPath} due to high branch count: {branchCount}\n")
+        #print(f"Skipping branch scan for {repoPath} due to high branch count: {branchCount}")
 
     return results
+
 
 
 if __name__ == "__main__":
