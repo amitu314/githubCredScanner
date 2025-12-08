@@ -6,6 +6,11 @@ import sys
 import argparse
 from pathlib import Path
 
+from patterns import build_pattern  
+
+# Optionally re-export so tests can still do: from secret_scanner import build_pattern
+__all__ = ["scan_directory", "DEFAULT_SKIP_DIRS", "DEFAULT_SKIP_EXTS", "build_pattern"]
+
 # Default junk / noisy directories to skip
 DEFAULT_SKIP_DIRS = {
     ".git", ".hg", ".svn",
@@ -24,27 +29,6 @@ DEFAULT_SKIP_EXTS = {
     ".exe", ".dll", ".so", ".dylib",
     ".class", ".jar",
 }
-
-
-def build_pattern() -> re.Pattern:
-    regPattern = r"""
-    (
-        (?:mongodb|postgres|mysql|jdbc|redis|ftp|smtp)[\s_\-=:][A-Za-z0-9+=._-]{10,}|
-        Azure_Storage_(?:AccountName|AccountKey|key|Key|KEY|AccessKey|ACCESSKEY|SasToken)[^\n]+|
-        ClientSecret"\svalue=.+|
-        (?:AccessKey|ACCESSKEY|ACCESS_KEY|Access_key)=\S{10,}|
-        AccountKey=\S{10,}|
-        secret_key_base:\s.[A-Za-z0-9_.-]{12,}|
-        secret(?:\s|:|=).+[A-Za-z0-9_.-]{12,}|
-        Bearer\s.\S{11,}|
-        api[_-](?:key|token)(?::|=).[A-Za-z0-9_.-]{10,}|
-        ssh-rsa\s+[A-Za-z0-9+/=]+|
-        -----BEGIN\s(?:RSA|DSA|EC|PGP|OPENSSH)\sPRIVATE\sKEY-----|
-        (?:password|passwd|pwd|Password|PASSWORD)\s*[:=]\s*["']?[^\s"']{8,}|
-        eyJ[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}
-    )
-    """
-    return re.compile(regPattern, re.IGNORECASE | re.VERBOSE)
 
 
 def is_binary_file(path: Path, blocksize: int = 1024) -> bool:
@@ -109,7 +93,6 @@ def scan_directory(
                 file_path = Path(current_root) / filename
 
                 # Skip by extension
-                #ext = file_path.suffix.lower()
                 ext = ("." + file_path.name.split(".")[-1].lower()) if "." in file_path.name else ""
                 if ext in effective_skip_exts:
                     continue
@@ -214,4 +197,3 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
-

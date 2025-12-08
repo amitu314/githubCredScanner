@@ -89,7 +89,7 @@ def test_respects_extra_skip_ext(tmp_path: Path):
     # Now explicitly skip .log files
     matches2 = scan_directory(tmp_path, output_file2, skip_exts={".log"})
     assert any("txtsecret" in m["match"] for m in matches2)
-    assert not any("logsecret" in m["match"] and m["file"] == str(log_file) for m in matches2)
+    assert not any("logsecret" in m["match"] and m["file"] == str(log_file) for m in matches2)  
 
 
 def test_uses_default_regex_pattern(tmp_path: Path):
@@ -104,4 +104,23 @@ def test_uses_default_regex_pattern(tmp_path: Path):
     matches = scan_directory(tmp_path, output_file, pattern=build_pattern())
 
     assert any("mydefaultpatternsecret" in m["match"] for m in matches)
+
+def test_detects_aws_access_key(tmp_path: Path):
+    file_path = tmp_path / "aws.txt"
+    _write_text(file_path, "AWS_ACCESS_KEY_ID=AKIA1234567890ABCD12")
+
+    output_file = tmp_path / "out.txt"
+    matches = scan_directory(tmp_path, output_file)
+
+    assert any("AKIA1234567890ABCD" in m["match"] for m in matches)
+
+
+def test_detects_openai_key(tmp_path: Path):
+    file_path = tmp_path / "openai.txt"
+    _write_text(file_path, 'OPENAI_API_KEY="sk-ABCDEFGHIJKLMNOPQRSTUV123456"')
+
+    output_file = tmp_path / "out.txt"
+    matches = scan_directory(tmp_path, output_file)
+
+    assert any("sk-ABCDEFGHIJKLMNOPQRSTUV123456" in m["match"] for m in matches)
 
