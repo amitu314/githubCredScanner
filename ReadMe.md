@@ -19,6 +19,9 @@ If there are repositories with more than 25 branches, this script will create a 
 - First run the cloneRepoOrgAcc script for Org Account OR run cloneUserAccRepo script to clone individual user account. This will clone all the repos from an Org / user account to a particular folder.
 - Then, run the checkCredonBranches.py script to get sensitive creds in the files under the repo (by OS walk)
 
+- If you have multiple Repo under a folder, use checkCredBranchesMultipleRepo
+  - if you have a single repo under a folder, use checkCredBranchesSingleeRepo
+
 ## What you will need?
 
 - You will need Github_API token and will need to set up either using  `export GITHUB_TOKEN='testtestestest'` or `$Env=GITHUB_TOKEN='testtesteest'`
